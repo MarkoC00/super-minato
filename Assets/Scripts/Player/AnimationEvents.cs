@@ -13,4 +13,15 @@ public class AnimationEvents : MonoBehaviour
     {
         combat.DealDamage();
     }
+
+    public void Rasengan()
+    {
+        combat.SpawnRasengan();
+    }
+
+    public void StopRasengan()
+    {
+        combat.StopRasengan();
+    }
+
 }

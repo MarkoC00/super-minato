@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class EasyEnemyMovement : MonoBehaviour
 {
@@ -18,13 +19,17 @@ public class EasyEnemyMovement : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.tag == "npcMovementTriggerRight")
+        if (collision.gameObject.tag == "npcMovementTriggerRight")
         {
             movementDir = -1;
         }
         if (collision.gameObject.tag == "npcMovementTriggerLeft")
         {
             movementDir = 1;
+        }
+        if (collision.gameObject.tag == "Player")
+        {
+            //SceneManager.LoadScene(SceneManager.GetActiveScene().name); //Pitati profesora
         }
     }
 

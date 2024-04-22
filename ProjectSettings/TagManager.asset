@@ -8,6 +8,8 @@ TagManager:
   - npcMovementTriggerRight
   - npcMovementTriggerLeft
   - Enemy
+  - WorldBottom
+  - SecretBox
   layers:
   - Default
   - TransparentFX

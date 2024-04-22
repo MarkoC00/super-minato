@@ -8,25 +8,40 @@ public class PlayerCombat : MonoBehaviour
     public Animator animator;
     public PlayerMovement movement;
 
+    private int rasenganCharge = 0;
+
+    public Transform rasPosR;
+    public Transform rasPosL;
+    public GameObject rasenganPrefab;
+
+
     GameObject enemyInRange;
 
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
         CheckForAttack();
+        Debug.Log("Rasengam: " + rasenganCharge);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Enemy")
         {
+
             enemyInRange = collision.gameObject;
-            Debug.Log("colideovali");
+
+        }
+        if (collision.gameObject.tag == "SecretBox")
+        {
+            rasenganCharge += 1;
+
+            collision.gameObject.GetComponent<SecretBox>().DestroyMe();
         }
     }
 
@@ -42,12 +57,16 @@ public class PlayerCombat : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.K))
         {
             //Rasengan
+            if(rasenganCharge > 0)
+            {
+                Rasengan();
+            }
         }
     }
 
     void NormalAttack()
     {
-        animator.SetBool("Attack", true);   
+        animator.SetBool("Attack", true);
     }
 
     //Funkcije za animaciju
@@ -56,7 +75,23 @@ public class PlayerCombat : MonoBehaviour
         animator.SetBool("Attack", false);
     }
     public void DealDamage()
-    {
+    { 
         enemyInRange.GetComponent<EasyEnemyMovement>().UnistiMe();
+    }
+
+    public void Rasengan()
+    {
+        animator.SetBool("Rasengan", true);
+        rasenganCharge -= 1;
+    }
+
+    public void StopRasengan()
+    {
+        animator.SetBool("Rasengan", false);
+    }
+
+    public void SpawnRasengan()
+    {
+        Instantiate(rasenganPrefab, rasPosR.position, Quaternion.identity);
     }
 }

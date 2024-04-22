@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -37,6 +38,12 @@ public class PlayerMovement : MonoBehaviour
         {
             isJumping = false;
             animator.SetBool("IsJumping", isJumping);
+        }
+
+        if (collision.gameObject.tag == "WorldBottom")
+        {
+            Debug.Log("Ispao sam");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
     public void OnTriggerExit2D(Collider2D collision)
