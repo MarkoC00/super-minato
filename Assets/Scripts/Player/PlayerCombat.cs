@@ -14,6 +14,8 @@ public class PlayerCombat : MonoBehaviour
     public Transform rasPosL;
     public GameObject rasenganPrefab;
 
+    public int rasenganChargePerSecret;
+
 
     GameObject enemyInRange;
 
@@ -26,7 +28,6 @@ public class PlayerCombat : MonoBehaviour
     void Update()
     {
         CheckForAttack();
-        Debug.Log("Rasengam: " + rasenganCharge);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -39,7 +40,7 @@ public class PlayerCombat : MonoBehaviour
         }
         if (collision.gameObject.tag == "SecretBox")
         {
-            rasenganCharge += 1;
+            rasenganCharge += rasenganChargePerSecret;
 
             collision.gameObject.GetComponent<SecretBox>().DestroyMe();
         }

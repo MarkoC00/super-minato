@@ -14,7 +14,6 @@ public class EasyEnemyMovement : MonoBehaviour
     void Update()
     {
         rb.velocity = new Vector2(moveSpeed * movementDir, rb.velocity.y);
-        Debug.Log(moveSpeed * movementDir);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
