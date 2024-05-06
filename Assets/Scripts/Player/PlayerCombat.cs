@@ -16,8 +16,14 @@ public class PlayerCombat : MonoBehaviour
 
     public int rasenganChargePerSecret;
 
-
-    GameObject enemyInRange;
+    public EnemyInRange enemyInRangeDetector;
+    private GameObject enemyInRange
+    {
+        get
+        {
+            return enemyInRangeDetector.currentTarget;
+        }
+    }
 
     void Start()
     {
@@ -32,12 +38,7 @@ public class PlayerCombat : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Enemy")
-        {
-
-            enemyInRange = collision.gameObject;
-
-        }
+     
         if (collision.gameObject.tag == "SecretBox")
         {
             rasenganCharge += rasenganChargePerSecret;
@@ -77,6 +78,7 @@ public class PlayerCombat : MonoBehaviour
     }
     public void DealDamage()
     { 
+        if (enemyInRange != null)
         enemyInRange.GetComponent<EasyEnemyMovement>().UnistiMe();
     }
 

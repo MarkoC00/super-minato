@@ -28,7 +28,7 @@ public class EasyEnemyMovement : MonoBehaviour
         }
         if (collision.gameObject.tag == "Player")
         {
-            //SceneManager.LoadScene(SceneManager.GetActiveScene().name); //Pitati profesora
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name); //Pitati profesora
         }
     }
 

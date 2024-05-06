@@ -15,7 +15,6 @@ public class Rasengan : MonoBehaviour
         if (collision.gameObject.layer == LayerMask.NameToLayer("Pipes")) 
         {
           
-
             collision.gameObject.GetComponent<Pipe>().UnfreezePipe();
 
             collision.gameObject.GetComponent<Pipe>().isFrozen = false;
