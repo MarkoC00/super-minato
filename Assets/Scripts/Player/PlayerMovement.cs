@@ -9,13 +9,15 @@ public class PlayerMovement : MonoBehaviour
     public Rigidbody2D rb;
     public SpriteRenderer sp;
     public Animator animator;
+    public Camera cam;
 
     [Header("Movement")]
     //Run
-    private float movementDir;
+    public float movementDir;
     public float movementSpeed = 7f;      
     private bool changingDirection => (rb.velocity.x > 0f && movementDir < 0f) || (rb.velocity.x < 0f && movementDir > 0f);
 
+    public int contactCount;
     //Jump
     public bool isJumping = false;
     public float jumpForce = 25f;
@@ -36,6 +38,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (collision.gameObject.tag == "jumpable")
         {
+            contactCount++;
             isJumping = false;
             animator.SetBool("IsJumping", isJumping);
         }
@@ -45,13 +48,27 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log("Ispao sam");
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
+        
+        if (collision.gameObject.tag == "CameraDown")
+        {
+            cam.GetComponent<CameraFollow>().shouldOffset = true;
+        }
+        if (collision.gameObject.tag == "CemaeraUpp")
+        {
+            cam.GetComponent<CameraFollow>().shouldOffset = false;
+        }
     }
     public void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "jumpable")
         {
-            isJumping = true;
-            animator.SetBool("IsJumping", isJumping);
+            contactCount--;
+            if (contactCount == 0)
+            {
+                isJumping = true;
+                animator.SetBool("IsJumping", isJumping);
+
+            }
         }
     }
 
