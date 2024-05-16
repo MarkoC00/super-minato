@@ -36,45 +36,34 @@ public class PlayerCombat : MonoBehaviour
     public GameObject rasenganUI;
     public GameObject kunaiUI;
 
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
     void Update()
     {
         CheckForAttack();
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    public void HitSecretBox()
     {
-     
-        if (collision.gameObject.tag == "SecretBox")
-        {
-            rasenganCharge += rasenganChargePerSecret + (int)RandomDropFromSecretBox().x;
-            kunaiCharge += kunaiChargePerSecret + (int)RandomDropFromSecretBox().y;
+        rasenganCharge += rasenganChargePerSecret + (int)RandomDropFromSecretBox().x;
+        kunaiCharge += kunaiChargePerSecret + (int)RandomDropFromSecretBox().y;
 
-            if (rasenganCharge > maxKunaiRasenganCharges)
-                rasenganCharge = maxKunaiRasenganCharges;
-            if (kunaiCharge > maxKunaiRasenganCharges)
-                kunaiCharge = maxKunaiRasenganCharges;
+        if (rasenganCharge > maxKunaiRasenganCharges)
+            rasenganCharge = maxKunaiRasenganCharges;
+        if (kunaiCharge > maxKunaiRasenganCharges)
+            kunaiCharge = maxKunaiRasenganCharges;
 
-            rasenganUI.GetComponent<RasenganKunai>().Show(rasenganCharge);
-            kunaiUI.GetComponent<RasenganKunai>().Show(kunaiCharge);
+        rasenganUI.GetComponent<RasenganKunai>().Show(rasenganCharge);
+        kunaiUI.GetComponent<RasenganKunai>().Show(kunaiCharge);
 
-            collision.gameObject.GetComponent<SecretBox>().DestroyMe();
 
-            Debug.Log("Rasengan Charge: " + rasenganCharge);
-            Debug.Log("Kunai Charge: " + kunaiCharge);
-        }
+        Debug.Log("Rasengan Charge: " + rasenganCharge);
+        Debug.Log("Kunai Charge: " + kunaiCharge);
     }
 
     Vector2 RandomDropFromSecretBox()
     {
         Vector2 ret = Vector2.zero;
 
-        int rasenganRand = Random.Range(0, 100); 
+        int rasenganRand = Random.Range(0, 100); // Generate a random number between 0 and 99
 
         if (rasenganRand < 50)
         {
@@ -169,7 +158,20 @@ public class PlayerCombat : MonoBehaviour
         kunaiCharge -= 1;
         kunaiUI.GetComponent<RasenganKunai>().Show(kunaiCharge);
 
-        currentKunai = Instantiate(kunaiPrefab, rasPosR.position, Quaternion.identity);
+        if (!movement.sp.flipX) //desno
+        {
+            var hit = Physics2D.Raycast(transform.position, rasPosR.position-transform.position, Vector2.Distance(transform.position,rasPosR.position)*1.5f, LayerMask.GetMask("Ground"));
+            Debug.Log(hit.collider);
+            Vector3 spawnPos = (hit.collider == null) ? rasPosR.position : hit.point;
+            currentKunai = Instantiate(kunaiPrefab,spawnPos, Quaternion.identity);
+            currentKunai.GetComponent<Kunai>().direction = 1;
+        }
+        if (movement.sp.flipX) //levo
+        {
+            currentKunai = Instantiate(kunaiPrefab, rasPosL.position, Quaternion.identity);
+            currentKunai.GetComponent<Kunai>().direction = -1;
+
+        }
     }
 
     public void StopRasengan()
@@ -178,14 +180,10 @@ public class PlayerCombat : MonoBehaviour
     }
 
     public void SpawnRasengan()
-    {
-        if (GetComponent<PlayerMovement>().movementDir == 1)
+    { 
+        if(!movement.sp.flipX)
             Instantiate(rasenganPrefab, rasPosR.position, Quaternion.identity);
-    
-        if(GetComponent<PlayerMovement>().movementDir == -1)
+        if(movement.sp.flipX)
             Instantiate(rasenganPrefab, rasPosL.position, Quaternion.identity);
-        else
-            Instantiate(rasenganPrefab, rasPosR.position, Quaternion.identity);
-
     }
 }

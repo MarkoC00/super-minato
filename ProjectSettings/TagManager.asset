@@ -12,6 +12,7 @@ TagManager:
   - SecretBox
   - CameraDown
   - CemaeraUpp
+  - ArenaEnter
   layers:
   - Default
   - TransparentFX

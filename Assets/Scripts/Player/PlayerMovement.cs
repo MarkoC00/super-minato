@@ -13,13 +13,19 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Movement")]
     //Run
-    public float movementDir;
+    private float movementDir;
     public float movementSpeed = 7f;      
     private bool changingDirection => (rb.velocity.x > 0f && movementDir < 0f) || (rb.velocity.x < 0f && movementDir > 0f);
 
-    public int contactCount;
     //Jump
-    public bool isJumping = false;
+    public bool isJumping
+    {
+        get
+        {
+            return colliderCount == 0;
+        }
+    }
+    public int colliderCount = 0;
     public float jumpForce = 25f;
 
     void Update()
@@ -38,8 +44,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (collision.gameObject.tag == "jumpable")
         {
-            contactCount++;
-            isJumping = false;
+            colliderCount++;
             animator.SetBool("IsJumping", isJumping);
         }
 
@@ -57,20 +62,21 @@ public class PlayerMovement : MonoBehaviour
         {
             cam.GetComponent<CameraFollow>().shouldOffset = false;
         }
+
+        if(collision.gameObject.tag == "ArenaEnter")
+        {
+            collision.gameObject.GetComponentInParent<Arena>().StartArena();
+        }
     }
     public void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "jumpable")
         {
-            contactCount--;
-            if (contactCount == 0)
-            {
-                isJumping = true;
-                animator.SetBool("IsJumping", isJumping);
-
-            }
+            colliderCount--;
+            animator.SetBool("IsJumping", isJumping);
         }
     }
+
 
     //Prikupljanje informacija
     private Vector2 GetInput()
