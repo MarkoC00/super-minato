@@ -3,21 +3,27 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerCombat : MonoBehaviour
 {
+    [Header("Reference")]
     public Animator animator;
     public PlayerMovement movement;
-
-    private int rasenganCharge = 0;
-    private int kunaiCharge = 0;
-
-    GameObject currentKunai = null;
-
     public Transform rasPosR;
     public Transform rasPosL;
     public GameObject rasenganPrefab;
     public GameObject kunaiPrefab;
+    public GameObject rasenganUI;
+    public GameObject kunaiUI;
+    public GameObject healthBar;
+
+    [Header("Combat")]
+    public int baseDamage = 10; 
+    private int rasenganCharge = 0;
+    private int kunaiCharge = 0;
+
+    GameObject currentKunai = null;
 
     public int rasenganChargePerSecret;
     public int kunaiChargePerSecret;
@@ -33,14 +39,38 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
-    public GameObject rasenganUI;
-    public GameObject kunaiUI;
+    [Header("Health")]
+    public int maxHealth;
+    int currentHelath;
+
+    private void Start()
+    {
+        healthBar.GetComponent<HealthSlider>().SetMaxHealth(maxHealth);
+        currentHelath = maxHealth;
+    }
 
     void Update()
     {
         CheckForAttack();
+
+        //Test
+        if(Input.GetKeyDown(KeyCode.O)) { TakeDamage(10); }
     }
 
+    public void TakeDamage(int dmg)
+    {
+        currentHelath-= dmg;
+        healthBar.GetComponent<HealthSlider>().SetHealth(currentHelath);
+
+        if(currentHelath <= 0)
+        {
+            animator.SetBool("Death", true);
+        }
+    }
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
     public void HitSecretBox()
     {
         rasenganCharge += rasenganChargePerSecret + (int)RandomDropFromSecretBox().x;
@@ -53,10 +83,6 @@ public class PlayerCombat : MonoBehaviour
 
         rasenganUI.GetComponent<RasenganKunai>().Show(rasenganCharge);
         kunaiUI.GetComponent<RasenganKunai>().Show(kunaiCharge);
-
-
-        Debug.Log("Rasengan Charge: " + rasenganCharge);
-        Debug.Log("Kunai Charge: " + kunaiCharge);
     }
 
     Vector2 RandomDropFromSecretBox()
@@ -142,7 +168,9 @@ public class PlayerCombat : MonoBehaviour
     public void DealDamage()
     { 
         if (enemyInRange != null)
-            enemyInRange.GetComponent<EasyEnemyMovement>().UnistiMe();
+        {
+            enemyInRange.GetComponent<Ihealth>().TakeDamage(baseDamage);
+        }
     }
 
     public void Rasengan()
@@ -161,14 +189,15 @@ public class PlayerCombat : MonoBehaviour
         if (!movement.sp.flipX) //desno
         {
             var hit = Physics2D.Raycast(transform.position, rasPosR.position-transform.position, Vector2.Distance(transform.position,rasPosR.position)*1.5f, LayerMask.GetMask("Ground"));
-            Debug.Log(hit.collider);
             Vector3 spawnPos = (hit.collider == null) ? rasPosR.position : hit.point;
             currentKunai = Instantiate(kunaiPrefab,spawnPos, Quaternion.identity);
             currentKunai.GetComponent<Kunai>().direction = 1;
         }
         if (movement.sp.flipX) //levo
         {
-            currentKunai = Instantiate(kunaiPrefab, rasPosL.position, Quaternion.identity);
+            var hit = Physics2D.Raycast(transform.position, rasPosL.position + transform.position, Vector2.Distance(transform.position, rasPosL.position) * 1.5f, LayerMask.GetMask("Ground"));
+            Vector3 spawnPos = (hit.collider == null) ? rasPosL.position : hit.point;
+            currentKunai = Instantiate(kunaiPrefab, spawnPos, Quaternion.identity);
             currentKunai.GetComponent<Kunai>().direction = -1;
 
         }
@@ -180,10 +209,16 @@ public class PlayerCombat : MonoBehaviour
     }
 
     public void SpawnRasengan()
-    { 
-        if(!movement.sp.flipX)
-            Instantiate(rasenganPrefab, rasPosR.position, Quaternion.identity);
-        if(movement.sp.flipX)
-            Instantiate(rasenganPrefab, rasPosL.position, Quaternion.identity);
+    {
+        if (!movement.sp.flipX)
+        {
+            GameObject rasengan = Instantiate(rasenganPrefab, rasPosR.position, Quaternion.identity);
+            rasengan.GetComponent<Rasengan>().lockPosition = rasPosR;
+        }
+        if (movement.sp.flipX)
+        {
+            GameObject rasengan =  Instantiate(rasenganPrefab, rasPosL.position, Quaternion.identity);
+            rasengan.GetComponent<Rasengan>().lockPosition = rasPosL;
+        }
     }
 }

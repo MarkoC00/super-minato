@@ -27,7 +27,7 @@ public class Kunai : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.tag == "jumpable")
+        if(collision.gameObject.tag == "jumpable" || collision.gameObject.tag == "Enemy")
             rb.velocity = Vector3.zero;
     }
 }

@@ -24,4 +24,13 @@ public class AnimationEvents : MonoBehaviour
         combat.StopRasengan();
     }
 
+    public void DeathStart()
+    {
+        combat.animator.SetBool("Death", false);
+    }
+    public void OnDeath()
+    {
+        combat.RestartGame();
+    }
+
 }

@@ -67,6 +67,10 @@ public class PlayerMovement : MonoBehaviour
         {
             collision.gameObject.GetComponentInParent<Arena>().StartArena();
         }
+        if (collision.gameObject.tag == "NextLVL")
+        {
+            SceneManager.LoadScene("lvl2");
+        }
     }
     public void OnTriggerExit2D(Collider2D collision)
     {

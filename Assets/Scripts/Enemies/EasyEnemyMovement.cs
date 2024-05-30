@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class EasyEnemyMovement : MonoBehaviour
+public class EasyEnemyMovement : MonoBehaviour, Ihealth
 {
     public Rigidbody2D rb;
 
@@ -32,7 +32,7 @@ public class EasyEnemyMovement : MonoBehaviour
         }
     }
 
-    public void UnistiMe()
+    public void TakeDamage(int dmg)
     {
         Destroy(gameObject);
     }

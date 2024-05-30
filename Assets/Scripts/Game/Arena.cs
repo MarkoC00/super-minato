@@ -8,6 +8,8 @@ public class Arena : MonoBehaviour
     public GameObject leftWall;
     public GameObject rightWall;
     public GameObject tipText;
+    public GameObject healthBars;
+    public GameObject shikamaru;
 
     public void StartArena()
     {
@@ -17,5 +19,9 @@ public class Arena : MonoBehaviour
         rightWall.SetActive(true);
 
         tipText.SetActive(false);
+
+        healthBars.SetActive(true);
+
+        shikamaru.GetComponent<Shikamaru>().startCombat = true;
     }
 }
