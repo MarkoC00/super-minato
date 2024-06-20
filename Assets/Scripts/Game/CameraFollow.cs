@@ -9,6 +9,7 @@ public class CameraFollow : MonoBehaviour
     public float yOffset = 2f;
     public Transform target;
 
+    [HideInInspector]
     public bool shouldOffset = false;
     float yOffsetAfterCalc;
 

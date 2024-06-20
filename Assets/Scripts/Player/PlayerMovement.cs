@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -27,11 +28,19 @@ public class PlayerMovement : MonoBehaviour
     }
     public int colliderCount = 0;
     public float jumpForce = 25f;
+    public int availableJumps = 1;
+
+    public Transform respawnPosition;
+    [HideInInspector]
+    public bool respawnEnabled = false;
 
     void Update()
     {
         movementDir = GetInput().x;
         CheckForJump();
+
+        if (availableJumps > 1)
+            availableJumps = 1;
     }
     private void FixedUpdate()
     {
@@ -45,13 +54,22 @@ public class PlayerMovement : MonoBehaviour
         if (collision.gameObject.tag == "jumpable")
         {
             colliderCount++;
+            availableJumps++;
             animator.SetBool("IsJumping", isJumping);
         }
 
         if (collision.gameObject.tag == "WorldBottom")
         {
-            Debug.Log("Ispao sam");
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            if(!respawnEnabled)
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            }
+            else
+            {
+                Respawn();
+            }
+
+            
         }
         
         if (collision.gameObject.tag == "CameraDown")
@@ -69,7 +87,15 @@ public class PlayerMovement : MonoBehaviour
         }
         if (collision.gameObject.tag == "NextLVL")
         {
+            StaticData.playerHealth = GetComponent<PlayerCombat>().currentHelath;
+            StaticData.playerRasenganCharge = GetComponent<PlayerCombat>().rasenganCharge;
+            StaticData.playerKunaiCharge = GetComponent<PlayerCombat>().kunaiCharge;
+
             SceneManager.LoadScene("lvl2");
+        }
+        if(collision.gameObject.tag == "Respawn")
+        {
+            respawnEnabled = true;
         }
     }
     public void OnTriggerExit2D(Collider2D collision)
@@ -90,7 +116,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void CheckForJump()
     {
-        if (Input.GetButtonDown("Jump") && !isJumping)
+        if (Input.GetButtonDown("Jump") && availableJumps > 0)
         {
             Jump();
         }
@@ -108,6 +134,20 @@ public class PlayerMovement : MonoBehaviour
     private void Jump()
     {
         rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
+
+        if (isJumping)
+        {
+            rb.AddForce(new Vector2(0, jumpForce * 1.05f), ForceMode2D.Impulse);
+        }
+
+        availableJumps--;
+    }
+
+    public void Respawn()
+    {
+        gameObject.GetComponent<PlayerCombat>().SetHealthOnRespawn();
+        this.transform.position = respawnPosition.position;
+        cam.transform.position = respawnPosition.position;
     }
 
     //Pomoci

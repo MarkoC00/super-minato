@@ -19,9 +19,11 @@ public class PlayerCombat : MonoBehaviour
     public GameObject healthBar;
 
     [Header("Combat")]
-    public int baseDamage = 10; 
-    private int rasenganCharge = 0;
-    private int kunaiCharge = 0;
+    public int baseDamage = 10;
+    //[HideInInspector]
+    public int rasenganCharge = 0;
+    //[HideInInspector]
+    public int kunaiCharge = 0;
 
     GameObject currentKunai = null;
 
@@ -39,9 +41,11 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
+
     [Header("Health")]
     public int maxHealth;
-    int currentHelath;
+    [HideInInspector]
+    public int currentHelath;
 
     private void Start()
     {
@@ -69,7 +73,14 @@ public class PlayerCombat : MonoBehaviour
     }
     public void RestartGame()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        if (!gameObject.GetComponent<PlayerMovement>().respawnEnabled)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+        else
+        {
+            gameObject.GetComponent<PlayerMovement>().Respawn();
+        }
     }
     public void HitSecretBox()
     {
@@ -220,5 +231,17 @@ public class PlayerCombat : MonoBehaviour
             GameObject rasengan =  Instantiate(rasenganPrefab, rasPosL.position, Quaternion.identity);
             rasengan.GetComponent<Rasengan>().lockPosition = rasPosL;
         }
+    }
+
+    public void SetHealthOnRespawn()
+    {
+        currentHelath = 100;
+        healthBar.GetComponent<HealthSlider>().SetHealth(currentHelath);
+
+        rasenganCharge = 5;
+        kunaiCharge = 5;
+
+        rasenganUI.GetComponent<RasenganKunai>().Show(rasenganCharge);
+        kunaiUI.GetComponent<RasenganKunai>().Show(kunaiCharge);
     }
 }
